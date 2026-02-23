@@ -1,1 +1,37 @@
+1. run this first:
+sh ovs-vsctl set port ap1-eth1 qos=@newqos \
+-- --id=@newqos create qos type=linux-htb other-config:max-rate=20000000 \
+queues:1=@q1 queues:2=@q2 queues:3=@q3 \
+-- --id=@q1 create queue other-config:min-rate=10000000 \
+-- --id=@q2 create queue other-config:min-rate=3000000 \
+-- --id=@q3 create queue other-config:min-rate=1000000
 
+2. 
+cloud1 iperf -s &
+sta4 iperf -c 10.0.0.200 -b 20M &
+
+3. sta1 iperf -s &
+fog1 iperf -c 10.0.0.1 -u -b 250k
+
+5. run this last
+py exec(open('traffic_logger.py').read()) 
+
+4. sta3 ping 10.0.0.100
+
+**********************************************
+
+1. sta1 iperf -s -u &
+cloud1 iperf -s &
+
+2. fog1 iperf -c 10.0.0.1 -u -b 250k -t 3600 &
+
+3. sta4 iperf -c 10.0.0.200 -t 3600 &
+
+4. sta3 ping 10.0.0.100 &
+
+5. py exec(open('traffic_logger.py').read()) 
+
+
+
+
+sh ovs-vsctl show
